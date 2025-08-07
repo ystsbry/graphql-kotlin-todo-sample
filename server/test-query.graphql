@@ -1,0 +1,46 @@
+# Test Queries for GraphQL Todo API
+
+# Get all todos
+query GetAllTodos {
+  todos {
+    id
+    title
+    description
+    completed
+    createdAt
+    updatedAt
+  }
+}
+
+# Create a new todo
+mutation CreateTodo {
+  createTodo(title: "Test Todo", description: "This is a test todo") {
+    id
+    title
+    description
+    completed
+  }
+}
+
+# Update a todo (replace ID with actual ID)
+mutation UpdateTodo {
+  updateTodo(id: "REPLACE_WITH_ID", title: "Updated Title", completed: true) {
+    id
+    title
+    completed
+    updatedAt
+  }
+}
+
+# Toggle todo status (replace ID with actual ID)
+mutation ToggleTodo {
+  toggleTodoStatus(id: "REPLACE_WITH_ID") {
+    id
+    completed
+  }
+}
+
+# Delete a todo (replace ID with actual ID)
+mutation DeleteTodo {
+  deleteTodo(id: "REPLACE_WITH_ID")
+}

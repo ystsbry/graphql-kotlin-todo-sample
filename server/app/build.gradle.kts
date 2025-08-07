@@ -8,6 +8,7 @@
 plugins {
     // Apply the org.jetbrains.kotlin.jvm Plugin to add support for Kotlin.
     alias(libs.plugins.kotlin.jvm)
+    kotlin("plugin.serialization") version "1.9.22"
 
     // Apply the application plugin to add support for building a CLI application in Java.
     application
@@ -19,6 +20,17 @@ repositories {
 }
 
 dependencies {
+    implementation("com.expediagroup:graphql-kotlin-server:7.0.2")
+    implementation("com.expediagroup:graphql-kotlin-schema-generator:7.0.2")
+    implementation("io.ktor:ktor-server-core:2.3.8")
+    implementation("io.ktor:ktor-server-netty:2.3.8")
+    implementation("io.ktor:ktor-server-content-negotiation:2.3.8")
+    implementation("io.ktor:ktor-server-cors:2.3.8")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.8")
+    implementation("ch.qos.logback:logback-classic:1.4.14")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
+    
     // Use the Kotlin JUnit 5 integration.
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
 
@@ -26,21 +38,18 @@ dependencies {
     testImplementation(libs.junit.jupiter.engine)
 
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-
-    // This dependency is used by the application.
-    implementation(libs.guava)
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
+        languageVersion = JavaLanguageVersion.of(17)
     }
 }
 
 application {
     // Define the main class for the application.
-    mainClass = "todo.AppKt"
+    mainClass = "com.example.ApplicationKt"
 }
 
 tasks.named<Test>("test") {

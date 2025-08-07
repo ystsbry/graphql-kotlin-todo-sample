@@ -18,7 +18,7 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.*
 
 @Serializable
 data class GraphQLRequest(
@@ -27,14 +27,35 @@ data class GraphQLRequest(
     val variables: Map<String, String>? = null
 )
 
-@Serializable
 data class GraphQLResponse(
     val data: Map<String, Any?>? = null,
     val errors: List<Map<String, Any>>? = null
 )
 
+fun convertToJsonElement(value: Any?): JsonElement {
+    return when (value) {
+        null -> JsonNull
+        is String -> JsonPrimitive(value)
+        is Number -> JsonPrimitive(value)
+        is Boolean -> JsonPrimitive(value)
+        is Map<*, *> -> buildJsonObject {
+            value.forEach { (k, v) ->
+                if (k is String) {
+                    put(k, convertToJsonElement(v))
+                }
+            }
+        }
+        is List<*> -> buildJsonArray {
+            value.forEach { item ->
+                add(convertToJsonElement(item))
+            }
+        }
+        else -> JsonPrimitive(value.toString())
+    }
+}
+
 fun main() {
-    embeddedServer(Netty, port = 8080, host = "0.0.0.0") {
+    embeddedServer(Netty, port = 8090, host = "0.0.0.0") {
         install(ContentNegotiation) {
             json(Json {
                 prettyPrint = true
@@ -82,18 +103,38 @@ fun main() {
                 
                 val executionResult = graphQL.execute(executionInput)
                 
-                val response = GraphQLResponse(
-                    data = executionResult.getData(),
-                    errors = executionResult.errors?.map { error ->
-                        mapOf(
-                            "message" to error.message,
-                            "locations" to error.locations,
-                            "path" to error.path
-                        )
+                val response = buildJsonObject {
+                    put("data", convertToJsonElement(executionResult.getData()))
+                    
+                    if (executionResult.errors != null && executionResult.errors.isNotEmpty()) {
+                        putJsonArray("errors") {
+                            executionResult.errors.forEach { error ->
+                                addJsonObject {
+                                    put("message", error.message ?: "Unknown error")
+                                    if (error.locations != null) {
+                                        putJsonArray("locations") {
+                                            error.locations.forEach { loc ->
+                                                addJsonObject {
+                                                    put("line", loc.line)
+                                                    put("column", loc.column)
+                                                }
+                                            }
+                                        }
+                                    }
+                                    if (error.path != null) {
+                                        putJsonArray("path") {
+                                            error.path.forEach { p ->
+                                                add(JsonPrimitive(p.toString()))
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
-                )
+                }
                 
-                call.respond(response)
+                call.respondText(response.toString(), ContentType.Application.Json)
             }
             
             get("/playground") {
