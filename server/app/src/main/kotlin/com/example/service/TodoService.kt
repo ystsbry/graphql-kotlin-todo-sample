@@ -2,6 +2,7 @@ package com.example.service
 
 import com.example.model.Todo
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.concurrent.ConcurrentHashMap
 
 class TodoService {
@@ -48,7 +49,7 @@ class TodoService {
             title = title ?: existingTodo.title,
             description = description ?: existingTodo.description,
             completed = completed ?: existingTodo.completed,
-            updatedAt = LocalDateTime.now()
+            updatedAt = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
         )
         
         todos[id] = updatedTodo
@@ -64,7 +65,7 @@ class TodoService {
         
         val updatedTodo = existingTodo.copy(
             completed = !existingTodo.completed,
-            updatedAt = LocalDateTime.now()
+            updatedAt = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
         )
         
         todos[id] = updatedTodo
