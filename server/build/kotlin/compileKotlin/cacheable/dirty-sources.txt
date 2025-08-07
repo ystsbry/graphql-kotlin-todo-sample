@@ -1,5 +1,0 @@
-C:\Users\ybaba\git-repos\graphql-kotlin-todo-sample\server\src\main\kotlin\com\example\graphql\TodoMutation.kt
-C:\Users\ybaba\git-repos\graphql-kotlin-todo-sample\server\src\main\kotlin\com\example\Application.kt
-C:\Users\ybaba\git-repos\graphql-kotlin-todo-sample\server\src\main\kotlin\com\example\model\Todo.kt
-C:\Users\ybaba\git-repos\graphql-kotlin-todo-sample\server\src\main\kotlin\com\example\graphql\TodoQuery.kt
-C:\Users\ybaba\git-repos\graphql-kotlin-todo-sample\server\src\main\kotlin\com\example\service\TodoService.kt
